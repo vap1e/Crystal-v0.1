@@ -1,80 +1,135 @@
-# Crystal-v0.1
-Real-time ransomware defense tool made by a first-year university student.
+Crystal v0.1 は、ランサムウェアの挙動を早期に検知することを目的とした教育・研究用途向けの概念実証（PoC）ツールです。商用アンチランサムウェア製品のような完全な保護を保証するものではありません。
 
-==========================================================
- Crystal v3.1 
-==========================================================
+【主な機能】
+・ファイルの異常な変更（高速書き込み、高エントロピー化など）の監視
+・カナリアファイルの監視
+・不審プロセスの検知および強制停止
+・ホワイトリストおよびブラックリストの管理
+・簡易 GUI による設定
+・プロセス制御のための管理者権限の要求
+・設定の保存（永続化）
 
-最終更新日: 2025年11月
+【動作環境】
+・Windows 10 / 11（64bit）
+・Python 3.11 以上
+・管理者権限が必要
 
-----------------------------------------------------------
- ■ 概要
-----------------------------------------------------------
-Crystal v3.1 は、ランサムウェア対策の概念実証(PoC)ツールです。
+【インストール方法】
 
-【主な特徴】
- 1.  監視: 書き込み速度、高エントロピー、カナリアファイルなど多角的に検知。
- 2.  自動インストール: Python環境に必要なライブラリを自動でインストール＆再起動します。
- 3.  GUI管理: ホワイトリスト機能により、安全なプロセスを簡単に登録・除外できます。
+requirements.txt を使用して必要なライブラリをインストールします。
 
-----------------------------------------------------------
- ■ 起動方法
-----------------------------------------------------------
-* 本アプリは、配布された「DIST」フォルダ内にある「.exe」ファイルを使用して起動してください。
-* 起動時にWindowsのUAC（ユーザーアカウント制御）により、管理者権限が要求されます。
-  （防御機能はシステムの深い部分にアクセスするため必須です。）
+main.py を実行します。
+初回起動時に依存ライブラリが自動インストールされる場合があります。一部の機能は再起動後に有効になります。
 
-----------------------------------------------------------
- ■ ⚠️ 免責事項（重要）
-----------------------------------------------------------
-本アプリは、学習および概念実証（PoC）のために開発されたものであり、開発段階にあります。
+【安全上の注意】
+・本ツールを本番環境や業務端末に導入しないでください。
+・学校や会社の PC など、自分の所有物でない環境に無断でインストールしないでください。
+・誤検知により正常なプロセスが終了する可能性があります。
+・必ず仮想環境やテスト用 PC で使用してください。
+・このツールを攻撃目的で使用することは禁止されています。
 
-1. 【保証の否認】本アプリは、全てのランサムウェア攻撃を防ぐことを保証するものではありません。
-2. 【責任の制限】本アプリの使用、または使用できなかったことにより生じた、直接的または間接的ないかなる損害（データの損失、システム障害などを含む）についても、開発者は一切の責任を負いません。
-3. 【自己責任】ユーザーは、本アプリを自己の責任において利用するものとします。
+【禁止事項】
+・本ツールを攻撃行為や不正行為の補助目的で使用すること
+・第三者の PC やネットワークに無断で導入・使用すること
+・法律や組織の規則に反する用途で使用すること
+※Crystal には攻撃用コードやマルウェアは含まれていません。
 
-★ 公的に、開発者はいかなる損害に対する責任も負わないことをここに表明します。
+【想定される用途】
+・ランサムウェアの挙動研究
+・セキュリティ教育・学習
+・研究室内での検証
+・PoC 手法の確認やデモ
 
-==========================================================
+【免責事項】
+Crystal v0.1 は現状のまま（AS IS）提供されます。
+開発者は以下に対して責任を負いません。
+・データ損失
+・システム障害
+・誤検知や機能の不具合による影響
+・その他の直接的または間接的な損害
+利用者自身の責任において使用してください。
 
+【ライセンス】
+本プロジェクトは MIT License の下で公開されています。
 
-In English
+🇺🇸 English README (Text Only)
 
-==========================================================
-Crystal v3.1
+Crystal v0.1 is a Proof-of-Concept (PoC) tool designed to demonstrate early detection techniques for ransomware behavior. It is intended solely for educational and research purposes and does not provide the full protection of a commercial anti-ransomware product.
 
-Last Updated: November 2025
+[Features]
 
-■ Overview
+Monitoring abnormal file modifications such as high write rates and high entropy
 
-Crystal v3.1 is a Proof-of-Concept (PoC) tool designed for ransomware countermeasures.
+Canary file integrity monitoring
 
-Key Features
+Detection and termination of suspicious processes
 
-Monitoring: Detects suspicious behavior through multiple indicators such as write speed, high entropy, and canary files.
+Whitelist and blacklist management
 
-Auto Installation: Automatically installs required Python libraries and restarts the environment.
+Simple graphical user interface
 
-GUI Management: Includes a whitelist feature that allows easy registration and exclusion of trusted processes.
+Requires administrator privileges for process control
 
-■ How to Launch
+Persistent configuration storage
 
-Start the application by running the .exe file located in the distributed DIST folder.
+[System Requirements]
 
-When launching, Windows UAC (User Account Control) will request administrator privileges.
-(This is required because the protection features access deep system layers.)
+Windows 10 / 11 (64-bit)
 
-■ ⚠️ Disclaimer (Important)
+Python 3.11 or higher
 
-This application is developed for educational use and as a proof-of-concept (PoC), and is still in the development stage.
+Administrator privileges
 
-No Warranty: This application does not guarantee prevention of all ransomware attacks.
+[Installation]
 
-Limitation of Liability: The developer assumes no responsibility for any direct or indirect damages arising from the use or inability to use this application, including but not limited to data loss or system failures.
+Install required libraries using requirements.txt
 
-Use at Your Own Risk: Users agree to operate this application at their own responsibility.
+Run main.py
+On first launch, some dependencies may be installed automatically. Certain features may require a system reboot.
 
-★ The developer hereby formally states that no liability of any kind shall be borne for any damages.
+[Safety Notes]
 
-==========================================================
+Do not install this tool on production systems or work machines.
 
+Do not install it on systems you do not own, such as school or company PCs, without permission.
+
+False positives may terminate legitimate processes.
+
+Always use this tool in a virtual machine or isolated test environment.
+
+Offensive or malicious use of this tool is strictly prohibited.
+
+[Prohibited Use]
+
+Using this tool to assist attacks or illegal activities
+
+Deploying or using it on third-party systems without authorization
+
+Any use that violates laws or organizational policies
+Note: Crystal does not include ransomware, malicious code, or attack tools.
+
+[Intended Use Cases]
+
+Ransomware behavior analysis
+
+Cybersecurity education and training
+
+Research laboratory testing
+
+Demonstration of PoC defensive techniques
+
+[Disclaimer]
+Crystal v0.1 is provided “AS IS” without warranty of any kind.
+The developer is not responsible for:
+
+Data loss
+
+System damage
+
+Effects resulting from false detections or malfunction
+
+Any direct or indirect damages
+Use this tool at your own risk.
+
+[License]
+This project is released under the MIT License.
