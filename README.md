@@ -1,135 +1,176 @@
-Crystal v0.1 は、ランサムウェアの挙動を早期に検知することを目的とした教育・研究用途向けの概念実証（PoC）ツールです。商用アンチランサムウェア製品のような完全な保護を保証するものではありません。
+Crystal v3 は、Windows 上でランサムウェアのような不審挙動を検知することを目的とした、教育・研究用途向けの概念実証（Proof of Concept）ツールです。本ツールは防御機能のアイデア検証を目的としており、実運用環境での利用や完全な保護を保証するものではありません。
 
 【主な機能】
-・ファイルの異常な変更（高速書き込み、高エントロピー化など）の監視
-・カナリアファイルの監視
-・不審プロセスの検知および強制停止
-・ホワイトリストおよびブラックリストの管理
-・簡易 GUI による設定
-・プロセス制御のための管理者権限の要求
-・設定の保存（永続化）
+・監視ディレクトリ内のファイル変更イベントの検知（watchdog 使用）
+・CANARY ファイルの自動生成と監視
+・高エントロピー化ファイルの検知
+・高書き込みレートを示すプロセスの検出および kill（設定により実行）
+・不審拡張子の生成検知
+・大量リネーム（burst rename）挙動の検知
+・レジストリ Run キーの監視
+・ハニーポート（疑似 SMB 風ポート）へのアクセス検知
+・疑わしいファイルを隔離フォルダへコピー（active mode 時）
+・ホワイトリスト管理 GUI
+・リアルタイムログとリスクスコア表示
+・依存ライブラリが無い場合の自動インストールと再起動
 
-【動作環境】
+【動作モード】
+・シミュレーションモード（dry_run=True）
+　検知のみで kill・隔離・防御コマンドを実行しません。
+・アクティブモード（dry_run=False）
+　プロセス終了、隔離、Firewall 一括遮断、ネットワークドライブ切断、VSS スナップショットなどを実際に行います。
+
+【必要環境】
 ・Windows 10 / 11（64bit）
 ・Python 3.11 以上
-・管理者権限が必要
+・管理者権限（必須）
+・インターネット接続（初回の依存ライブラリ自動インストール時に必要）
 
-【インストール方法】
+【依存関係】（コードより抽出済み）
+・watchdog
+・psutil
+・pywin32（win32api のため）
+これらは起動時に自動チェックされ、不足していれば GUI で確認後 pip により自動インストールされ、再起動されます。
 
-requirements.txt を使用して必要なライブラリをインストールします。
+【監視対象】
+・ユーザーデスクトップ
+・ドキュメント
+（config_v3.json にて変更可能）
 
-main.py を実行します。
-初回起動時に依存ライブラリが自動インストールされる場合があります。一部の機能は再起動後に有効になります。
+【トリガー条件（抜粋）】
+・CANARY ファイルを触られる
+・高エントロピーのファイルが連続で生成・更新される
+・大量の rename イベント
+・不審拡張子（.encrypted / .crypted など）の生成
+・レジストリ Run キーが変化
+・ハニーポートへのアクセス
+・プロセスの高速書き込み（デフォルト 50MB/s 超）
 
-【安全上の注意】
-・本ツールを本番環境や業務端末に導入しないでください。
-・学校や会社の PC など、自分の所有物でない環境に無断でインストールしないでください。
-・誤検知により正常なプロセスが終了する可能性があります。
-・必ず仮想環境やテスト用 PC で使用してください。
-・このツールを攻撃目的で使用することは禁止されています。
+これらをスコア化し、閾値に達した場合に防御アクションを実行（またはシミュレーション）します。
 
-【禁止事項】
-・本ツールを攻撃行為や不正行為の補助目的で使用すること
-・第三者の PC やネットワークに無断で導入・使用すること
-・法律や組織の規則に反する用途で使用すること
-※Crystal には攻撃用コードやマルウェアは含まれていません。
+【注意事項】
+・本ツールは Windows のシステム API・ファイル監視・プロセス操作・レジストリ操作を行います。
+・誤検知により正規のプロセスが kill される可能性があります。
+・重要データが存在する環境では絶対に使用しないでください。
+・必ず仮想環境・テスト用 PC で使用してください。
+・学校・企業・他者所有の PC に無断で導入しないでください。
+・攻撃目的での利用は禁止します（攻撃用コードは含まれていません）。
 
-【想定される用途】
-・ランサムウェアの挙動研究
-・セキュリティ教育・学習
-・研究室内での検証
-・PoC 手法の確認やデモ
-
-【免責事項】
-Crystal v0.1 は現状のまま（AS IS）提供されます。
-開発者は以下に対して責任を負いません。
-・データ損失
-・システム障害
-・誤検知や機能の不具合による影響
-・その他の直接的または間接的な損害
-利用者自身の責任において使用してください。
+【免責事項（重要・強化版）】
+Crystal v3 は「現状のまま (AS IS)」で提供され、いかなる種類の保証も行いません。
+開発者は、以下を含むあらゆる損害・不具合について一切の責任を負いません。
+・データ消失、破損
+・システム障害、OS 動作不全
+・プロセス kill による業務停止
+・不正検知・誤検知
+・誤設定や利用者の操作による影響
+・本ツールを使用した結果生じた直接的・間接的な損害
+本ツールの使用により生じた結果はすべて利用者自身の責任となります。
+本ツールを使用した時点で、利用者はこれらの免責に同意したものとします。
 
 【ライセンス】
-本プロジェクトは MIT License の下で公開されています。
+MIT License（ソフトウェアの利用責任は全て利用者にあります）
 
-🇺🇸 English README (Text Only)
+🇺🇸 Crystal v3 — README (Text Only / Strong Disclaimer)
 
-Crystal v0.1 is a Proof-of-Concept (PoC) tool designed to demonstrate early detection techniques for ransomware behavior. It is intended solely for educational and research purposes and does not provide the full protection of a commercial anti-ransomware product.
+Crystal v3 is a Proof-of-Concept (PoC) tool designed for educational and research purposes to illustrate defensive techniques against ransomware-like behavior on Windows systems. It is not intended for production use, and it does not guarantee any form of full protection.
 
-[Features]
+[Key Features]
 
-Monitoring abnormal file modifications such as high write rates and high entropy
+File system monitoring using watchdog
 
-Canary file integrity monitoring
+Automatic creation and monitoring of CANARY files
 
-Detection and termination of suspicious processes
+High-entropy file detection
 
-Whitelist and blacklist management
+Process write-rate monitoring with optional automatic termination
 
-Simple graphical user interface
+Detection of suspicious extensions
 
-Requires administrator privileges for process control
+Burst rename detection
 
-Persistent configuration storage
+Registry monitoring for Run keys
 
-[System Requirements]
+Honeypot TCP ports
+
+Automatic isolation copy for suspicious files (active mode only)
+
+GUI with whitelist management
+
+Real-time log and scoring system
+
+Automatic dependency installation with restart
+
+[Modes]
+Simulation mode (dry_run=True): detection only.
+Active mode (dry_run=False): process termination, isolation, firewall blocking, disconnecting network drives, and VSS snapshot creation.
+
+[Requirements]
 
 Windows 10 / 11 (64-bit)
 
-Python 3.11 or higher
+Python 3.11+
 
-Administrator privileges
+Administrator privileges (mandatory)
 
-[Installation]
+Internet access for first-time dependency installation
 
-Install required libraries using requirements.txt
+[Monitored Targets]
 
-Run main.py
-On first launch, some dependencies may be installed automatically. Certain features may require a system reboot.
+Desktop
 
-[Safety Notes]
+Documents
+(these can be changed in config_v3.json)
 
-Do not install this tool on production systems or work machines.
+[Trigger Examples]
 
-Do not install it on systems you do not own, such as school or company PCs, without permission.
+CANARY file modification
 
-False positives may terminate legitimate processes.
+Multiple high-entropy file writes
 
-Always use this tool in a virtual machine or isolated test environment.
+Burst rename events
 
-Offensive or malicious use of this tool is strictly prohibited.
+Creation of suspicious file extensions
 
-[Prohibited Use]
+Registry Run key changes
 
-Using this tool to assist attacks or illegal activities
+Honeypot port connections
 
-Deploying or using it on third-party systems without authorization
+High write-rate processes (default 50MB/s)
 
-Any use that violates laws or organizational policies
-Note: Crystal does not include ransomware, malicious code, or attack tools.
+Once the internal score exceeds the configured threshold, defensive actions are triggered (or simulated).
 
-[Intended Use Cases]
+[Important Notes]
 
-Ransomware behavior analysis
+This tool interacts with low-level Windows APIs, processes, registry keys, and filesystem events.
 
-Cybersecurity education and training
+False positives may kill legitimate processes.
 
-Research laboratory testing
+Do NOT use this on machines containing important data.
 
-Demonstration of PoC defensive techniques
+Only use inside virtual machines or testing PCs.
 
-[Disclaimer]
-Crystal v0.1 is provided “AS IS” without warranty of any kind.
-The developer is not responsible for:
+Do NOT install on computers you do not own.
 
-Data loss
+Offensive or malicious use is prohibited (no attack code is included).
 
-System damage
+[Disclaimer (Strong)]
+Crystal v3 is provided strictly “AS IS,” without any warranties, express or implied.
+The developer assumes absolutely no responsibility for any kind of damage or loss, including but not limited to:
 
-Effects resulting from false detections or malfunction
+data loss or corruption
 
-Any direct or indirect damages
-Use this tool at your own risk.
+system instability or failure
+
+termination of legitimate processes
+
+false positives or misdetections
+
+improper configuration or misuse
+
+any direct, indirect, incidental, or consequential damages
+All risks and responsibilities related to the use of this tool rest entirely with the user.
+By using this software, the user agrees to all responsibility and fully accepts the disclaimer.
 
 [License]
-This project is released under the MIT License.
+MIT License (All responsibility of use lies solely with the user)
